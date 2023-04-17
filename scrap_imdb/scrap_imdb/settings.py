@@ -7,10 +7,13 @@
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
+
+
 BOT_NAME = "scrap_imdb"
 
 SPIDER_MODULES = ["scrap_imdb.spiders"]
 NEWSPIDER_MODULE = "scrap_imdb.spiders"
+
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
@@ -18,6 +21,15 @@ NEWSPIDER_MODULE = "scrap_imdb.spiders"
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
+
+
+FEED_FORMAT = 'csv'
+FEED_URI = 'output.csv'
+FEED_EXPORTERS = {
+    'csv': 'scrapy.exporters.CsvItemExporter',
+}
+FEED_EXPORT_FIELDS = ['title', 'year']
+
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32

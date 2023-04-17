@@ -6,8 +6,28 @@
 
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
+from scrapy.exporters import CsvItemExporter
 
 
 class ScrapImdbPipeline:
     def process_item(self, item, spider):
+        return item
+
+
+class CsvPipeline(object):
+    def __init__(self):
+        self.file = None
+        self.exporter = None
+
+    def open_spider(self, spider):
+        self.file = open('output.csv', 'wb')
+        self.exporter = CsvItemExporter(self.file)
+        self.exporter.start_exporting()
+
+    def close_spider(self, spider):
+        self.exporter.finish_exporting()
+        self.file.close()
+
+    def process_item(self, item, spider):
+        self.exporter.export_item(item)
         return item
