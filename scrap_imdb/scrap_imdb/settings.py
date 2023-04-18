@@ -24,11 +24,11 @@ ROBOTSTXT_OBEY = True
 
 
 FEED_FORMAT = 'csv'
-FEED_URI = 'output.csv'
+FEED_URI = 'data_scraped.csv'
 FEED_EXPORTERS = {
     'csv': 'scrapy.exporters.CsvItemExporter',
 }
-FEED_EXPORT_FIELDS = ['title', 'year']
+FEED_EXPORT_FIELDS = ['titre_original', 'durée', 'date','score','nbr_votants', 'desciption', 'genre','acteurs']
 
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
@@ -103,3 +103,11 @@ FEED_EXPORT_FIELDS = ['title', 'year']
 REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"
+
+
+RANDOMIZE_DOWNLOAD_DELAY = True
+DOWNLOAD_DELAY = 1
+CONCURRENT_REQUESTS_PER_DOMAIN = 2
+COOKIES_ENABLED = False
+RETRY_TIMES = 3
+HTTPCACHE_ENABLED = True 
