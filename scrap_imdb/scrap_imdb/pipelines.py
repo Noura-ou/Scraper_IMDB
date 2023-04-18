@@ -1,17 +1,32 @@
 # Define your item pipelines here
-#
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-
-
 # useful for handling different item types with a single interface
+
 from itemadapter import ItemAdapter
 from scrapy.exporters import CsvItemExporter
+import pymongo
+from pymongo import MongoClient
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+ATLAS_KEY = os.getenv('ATLAS_KEY')
 
 
 class ScrapImdbPipeline:
+    
+    def __init__(self):
+        ATLAS_KEY = os.getenv('ATLAS_KEY')
+        client = MongoClient(ATLAS_KEY)
+        db = client.Db_scraped_IMDB
+        self.collection = db.Db_film
+        
+
     def process_item(self, item, spider):
+        self.collection.insert_one(dict(item))
         return item
+    
 
 
 class CsvPipeline(object):

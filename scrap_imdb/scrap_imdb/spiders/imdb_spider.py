@@ -1,5 +1,6 @@
 import scrapy
 from ..items import ScrapImdbItem
+import re
 
 class ImdbSpiderSpider(scrapy.Spider):
     name = "imdb_spider"
@@ -18,7 +19,6 @@ class ImdbSpiderSpider(scrapy.Spider):
         # extraire les liens vers les pages de chaque film
         
         links = response.css('td.titleColumn a::attr(href)').getall()
-        titre = response.css('td.titleColumn a::text').get()
         for link in links:
             yield response.follow(link, callback=self.parse_movie)
         
@@ -35,11 +35,18 @@ class ImdbSpiderSpider(scrapy.Spider):
         genre = response.xpath('(//div[@class="ipc-chip-list--baseAlt ipc-chip-list"]//div[@class="ipc-chip-list__scroller"])//text()').extract()
         desciption = response.xpath('(//p[@class="sc-5f699a2-3 lopbTB"]//span[@class="sc-5f699a2-2 cxqNYC"])//text()').extract()
         acteurs = response.xpath('(//li[@class="ipc-metadata-list__item ipc-metadata-list-item--link"]//div[@class="ipc-metadata-list-item__content-container"]//ul[@class="ipc-inline-list ipc-inline-list--show-dividers ipc-inline-list--inline ipc-metadata-list-item__list-content baseAlt"])//text()').extract()
-        #(//ul[@class="ipc-metadata-list ipc-metadata-list--dividers-all ipc-metadata-list--base"]//li[@class="ipc-metadata-list__item"]//div[@class="ipc-metadata-list-item__content-container"]//ul[@class="ipc-inline-list ipc-inline-list--show-dividers ipc-inline-list--inline ipc-metadata-list-item__list-content base"]//li[@class="ipc-inline-list__item"]//a[@class="ipc-metadata-list-item__list-content-item ipc-metadata-list-item__list-content-item--link"])//text()
         #pays = response.xpath('(//ul[@class="ipc-metadata-list ipc-metadata-list--dividers-all ipc-metadata-list--base"]//li[@class="ipc-metadata-list__item"]//div[@class="ipc-metadata-list-item__content-container"]//ul[@class="ipc-inline-list ipc-inline-list--show-dividers ipc-inline-list--inline ipc-metadata-list-item__list-content base"]//li[@class="ipc-inline-list__item"]//a[@class="ipc-metadata-list-item__list-content-item ipc-metadata-list-item__list-content-item--link"])//text()').extract()
 
+        # extraire les heures et les minutes de la durée
+        heure, minute = durée.split("h ")
+        # convertir les heures et les minutes en entiers
+        heure = int(heure)
+        minute = int(minute.replace("m", ""))
+        # calculer la durée en minutes
+        duree_minutes = heure * 60 + minute
+        # ajouter la durée en minutes à votre objet items
+        items['durée'] = duree_minutes
         items['titre_original'] = titre_original
-        items['durée'] = durée
         items['date'] = date
         items['score'] = score
         items['nbr_votants'] = nbr_votants
