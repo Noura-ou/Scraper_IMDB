@@ -34,7 +34,7 @@ class ImdbSpiderSpider(scrapy.Spider):
         acteurs = response.xpath('(//li[@class="ipc-metadata-list__item ipc-metadata-list-item--link"]//div[@class="ipc-metadata-list-item__content-container"]//ul[@class="ipc-inline-list ipc-inline-list--show-dividers ipc-inline-list--inline ipc-metadata-list-item__list-content baseAlt"])[1]//text()').extract()
         pays = response.xpath('(//ul[@class="ipc-metadata-list ipc-metadata-list--dividers-all ipc-metadata-list--base"]//li[@class="ipc-metadata-list__item"]//div[@class="ipc-metadata-list-item__content-container"]//ul[@class="ipc-inline-list ipc-inline-list--show-dividers ipc-inline-list--inline ipc-metadata-list-item__list-content base"]//li[@class="ipc-inline-list__item"]//a[@class="ipc-metadata-list-item__list-content-item ipc-metadata-list-item__list-content-item--link"])[1]//text()').extract()
         langue_d_origine = response.xpath('(//ul[@class="ipc-metadata-list ipc-metadata-list--dividers-all ipc-metadata-list--base"]//li[@class="ipc-metadata-list__item"]//div[@class="ipc-metadata-list-item__content-container"]//ul[@class="ipc-inline-list ipc-inline-list--show-dividers ipc-inline-list--inline ipc-metadata-list-item__list-content base"]//li[@class="ipc-inline-list__item"]//a[@class="ipc-metadata-list-item__list-content-item ipc-metadata-list-item__list-content-item--link"])[4]//text()').extract()
-        
+        budget = response.xpath('(//li[@class="ipc-metadata-list__item sc-6d4f3f8c-2 byhjlB"]//div[@class="ipc-metadata-list-item__content-container"]//li[@class="ipc-inline-list__item"]//span[@class="ipc-metadata-list-item__list-content-item"])[1]//text()').get()
         
         def convertir_time(durée):
             # extraire les heures et les minutes de la durée
@@ -57,6 +57,7 @@ class ImdbSpiderSpider(scrapy.Spider):
         items['acteurs'] = acteurs
         items['pays'] = pays
         items['langue_d_origine'] = langue_d_origine
+        items['budget'] = budget
 
         yield items
 

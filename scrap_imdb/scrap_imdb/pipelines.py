@@ -3,12 +3,13 @@
 # See: https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 # useful for handling different item types with a single interface
 
-from itemadapter import ItemAdapter
 from scrapy.exporters import CsvItemExporter
 import pymongo
 from pymongo import MongoClient
 from dotenv import load_dotenv
 import os
+import re
+
 
 load_dotenv()
 ATLAS_KEY = os.getenv('ATLAS_KEY')
@@ -23,7 +24,7 @@ class ScrapImdbPipeline:
         self.collection = db.Db_film
         
 
-    def process_item(self, item):
+    def process_item(self, item , spider):
         self.collection.insert_one(dict(item))
         return item
     
@@ -67,6 +68,45 @@ class ScrapImdbPipeline:
                 average_runtime = sum(time_list) / len(time_list)
                 result += f"La durée moyenne d'un film de genre {genre} est de {average_runtime:.2f} minutes.\n"
         return result
+     
+     # Questions Bonus : 
+
+    def longest_movies_by_genre(self, genre: str, n: int) -> str:
+        top_movies = self.collection.find({"genre": {"$regex": genre}}).sort([("durée", pymongo.DESCENDING)]).limit(n)
+        movie_titles = [movie["titre_original"] for movie in top_movies]
+        result = f"Les {n} films les plus longs de genre '{genre}' sont : \n"
+        for i, title in enumerate(movie_titles):
+            result += f"{i+1}. {title}\n"
+        return result
+    
+  
+
+    def cost_per_minute_by_genre(self, genre):
+        genre_movies = [movie for movie in self.collection.find({"genre": genre})]
+        total_budget = 0
+        total_runtime = 0
+        for movie in genre_movies:
+            budget_str = movie["budget"]
+            if budget_str is None:
+                continue
+            budget_str = budget_str.split()[0].replace(",", "")
+            budget_str = re.sub('[^0-9]', '', budget_str)  # extract only digits
+            if not budget_str.isdigit():  # check if the string contains only digits
+                continue
+            budget = int(budget_str)
+            runtime = int(movie["durée"])
+            total_budget += budget
+            total_runtime += runtime
+        cost_per_minute = total_budget / (total_runtime // 60)
+        return cost_per_minute
+
+
+
+pipeline = ScrapImdbPipeline()
+
+cost_per_minute_by_genre = pipeline.cost_per_minute_by_genre('Drama')
+print(cost_per_minute_by_genre)
+
 
 
 

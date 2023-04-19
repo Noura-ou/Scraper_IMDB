@@ -28,7 +28,7 @@ FEED_URI = 'data_scraped.csv'
 FEED_EXPORTERS = {
     'csv': 'scrapy.exporters.CsvItemExporter',
 }
-FEED_EXPORT_FIELDS = ['titre_original', 'durée', 'date','score','nbr_votants', 'desciption', 'genre','acteurs' , 'pays' , 'langue_d_origine']
+FEED_EXPORT_FIELDS = ['titre_original', 'durée', 'date','score','nbr_votants', 'desciption', 'genre','acteurs' , 'pays' , 'langue_d_origine', 'budget']
 
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
