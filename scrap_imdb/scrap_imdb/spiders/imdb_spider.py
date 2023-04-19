@@ -35,15 +35,21 @@ class ImdbSpiderSpider(scrapy.Spider):
         Sociétés_de_production = response.xpath('(//li[@class="ipc-metadata-list__item ipc-metadata-list-item--link"]//div[@class="ipc-metadata-list-item__content-container"]//ul[@class="ipc-inline-list ipc-inline-list--show-dividers ipc-inline-list--inline ipc-metadata-list-item__list-content base"]//li[@class="ipc-inline-list__item"]//a[@class="ipc-metadata-list-item__list-content-item ipc-metadata-list-item__list-content-item--link"])[3]//text()').extract()       
         
         def convertir_time(durée):
-            # extraire les heures et les minutes de la durée
-            heure, minute = durée.split("h ")
-            # convertir les heures et les minutes en entiers
-            heure = int(heure)
-            minute = int(minute.replace("m", ""))
-            # calculer la durée en minutes
+            if 'h' in durée and 'm' in durée:
+                heure, minute = durée.split("h ")
+                heure = int(heure)
+                minute = int(minute.replace("m", ""))
+            elif 'h' in durée:
+                heure = int(durée.replace("h", ""))
+                minute = 0
+            elif 'm' in durée:
+                heure = 0
+                minute = int(durée.replace("m", ""))
+            else:
+                raise ValueError()
             duree_minutes = heure * 60 + minute
             return duree_minutes
-        
+    
      
         items['titre_original'] = titre_original
         items['date'] = date
