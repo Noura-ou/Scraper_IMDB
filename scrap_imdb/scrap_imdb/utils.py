@@ -23,7 +23,7 @@ def longest_movie(collection) -> str:
 def top_film_note(collection)-> str:
     top_rated = collection.find().sort([("score", pymongo.DESCENDING)]).limit(5)
     top_movies = [movie["titre_original"] for movie in top_rated]
-    return "Les cinq meilleurs films sont : {}".format (top_movies)
+    return "Les cinq meilleurs films sont : {}".format(", ".join(top_movies))
 
 
 def count_movies(actor: str) -> str:
@@ -48,15 +48,17 @@ def percentage_by_country(country: str, n: int) -> str:
         return f"Parmi les {n} films les mieux notés, {percentage:.2f}% sont de {country}."
 
 
-def average_time_by_genre(collection) -> str:
-        result = ""
-        genres = collection.distinct("genre")
-        for genre in genres:
-            time_list = [movie["durée"] for movie in collection.find({"genre": {"$regex": genre}})]
-            if time_list:
-                average_runtime = sum(time_list) / len(time_list)
-                result += f"La durée moyenne d'un film de genre {genre} est de {average_runtime:.2f} minutes.\n"
-        return result
+def average_time_by_genre(genre=None) -> str:
+    result = ""
+    genres = collection.distinct("genre")
+    if genre:
+        genres = [genre]
+    for genre in genres:
+        time_list = [movie["durée"] for movie in collection.find({"genre": {"$regex": genre}})]
+        if time_list:
+            average_runtime = sum(time_list) / len(time_list)
+            result += f"La durée moyenne d'un film de genre {genre} est de {average_runtime:.2f} minutes.\n"
+    return result
 
 
 def longest_movies_by_genre(genre: str, n: int) -> str:
@@ -85,5 +87,5 @@ def cost_per_minute_by_genre(genre):
             total_budget += budget
             total_runtime += runtime
         cost_per_minute = total_budget / (total_runtime // 60)
-        return cost_per_minute
+        return "le coût de tournage d’une minute des films de genre ' {} ' est ' {} '".format(genre,cost_per_minute)
 

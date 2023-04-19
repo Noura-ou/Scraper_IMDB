@@ -22,13 +22,16 @@ NEWSPIDER_MODULE = "scrap_imdb.spiders"
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
 
-
 FEED_FORMAT = 'csv'
-FEED_URI = 'data_scraped.csv'
+FEED_URI = 'movies.csv'
 FEED_EXPORTERS = {
     'csv': 'scrapy.exporters.CsvItemExporter',
 }
 FEED_EXPORT_FIELDS = ['titre_original', 'durée', 'date','score','nbr_votants', 'desciption', 'genre','acteurs' , 'pays' , 'langue_d_origine', 'budget', 'Sociétés_de_production']
+
+#CSV for series spider
+FEED_URI = 'series.csv'
+FEED_EXPORT_FIELDS = ['titre_original']
 
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
@@ -76,6 +79,7 @@ FEED_EXPORT_FIELDS = ['titre_original', 'durée', 'date','score','nbr_votants', 
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
    "scrap_imdb.pipelines.ScrapImdbPipeline": 300,
+   "scrap_imdb.pipelines.ScrapSeriesPipeline": 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

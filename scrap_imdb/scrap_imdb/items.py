@@ -1,7 +1,6 @@
 # Define here the models for your scraped items
-
-
 import scrapy
+
 
 
 class ScrapImdbItem(scrapy.Item):
@@ -17,3 +16,7 @@ class ScrapImdbItem(scrapy.Item):
     langue_d_origine = scrapy.Field()
     budget = scrapy.Field()
     Sociétés_de_production = scrapy.Field()
+
+
+class ScrapImdbSeriesItem(scrapy.Item):
+    titre_original = scrapy.Field()
