@@ -1,11 +1,10 @@
 import scrapy
 from ..items import ScrapImdbItem
-import re
+
 
 class ImdbSpiderSpider(scrapy.Spider):
     name = "imdb_spider"
     allowed_domains = ["imdb.com"]
-    #start_urls = ['https://www.imdb.com/chart/top/?ref_=nv_mv_250']
     user_agent = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/111.0'
 
     def start_requests(self):
@@ -13,7 +12,6 @@ class ImdbSpiderSpider(scrapy.Spider):
             'User-Agent': self.user_agent
         })
 
-#__________________________________________________________________________
 
     def parse(self, response):
         # extraire les liens vers les pages de chaque film
@@ -22,7 +20,6 @@ class ImdbSpiderSpider(scrapy.Spider):
         for link in links:
             yield response.follow(link, callback=self.parse_movie)
         
-    
 
     def parse_movie(self, response):
 
@@ -37,20 +34,24 @@ class ImdbSpiderSpider(scrapy.Spider):
         acteurs = response.xpath('(//li[@class="ipc-metadata-list__item ipc-metadata-list-item--link"]//div[@class="ipc-metadata-list-item__content-container"]//ul[@class="ipc-inline-list ipc-inline-list--show-dividers ipc-inline-list--inline ipc-metadata-list-item__list-content baseAlt"])[1]//text()').extract()
         pays = response.xpath('(//ul[@class="ipc-metadata-list ipc-metadata-list--dividers-all ipc-metadata-list--base"]//li[@class="ipc-metadata-list__item"]//div[@class="ipc-metadata-list-item__content-container"]//ul[@class="ipc-inline-list ipc-inline-list--show-dividers ipc-inline-list--inline ipc-metadata-list-item__list-content base"]//li[@class="ipc-inline-list__item"]//a[@class="ipc-metadata-list-item__list-content-item ipc-metadata-list-item__list-content-item--link"])[1]//text()').extract()
         langue_d_origine = response.xpath('(//ul[@class="ipc-metadata-list ipc-metadata-list--dividers-all ipc-metadata-list--base"]//li[@class="ipc-metadata-list__item"]//div[@class="ipc-metadata-list-item__content-container"]//ul[@class="ipc-inline-list ipc-inline-list--show-dividers ipc-inline-list--inline ipc-metadata-list-item__list-content base"]//li[@class="ipc-inline-list__item"]//a[@class="ipc-metadata-list-item__list-content-item ipc-metadata-list-item__list-content-item--link"])[4]//text()').extract()
-        # extraire les heures et les minutes de la durée
-        heure, minute = durée.split("h ")
-        # convertir les heures et les minutes en entiers
-        heure = int(heure)
-        minute = int(minute.replace("m", ""))
-        # calculer la durée en minutes
-        duree_minutes = heure * 60 + minute
-        # ajouter la durée en minutes à votre objet items
         
+        
+        def convertir_time(durée):
+            # extraire les heures et les minutes de la durée
+            heure, minute = durée.split("h ")
+            # convertir les heures et les minutes en entiers
+            heure = int(heure)
+            minute = int(minute.replace("m", ""))
+            # calculer la durée en minutes
+            duree_minutes = heure * 60 + minute
+            return duree_minutes
+        
+     
         items['titre_original'] = titre_original
         items['date'] = date
         items['score'] = score
         items['nbr_votants'] = nbr_votants
-        items['durée'] = duree_minutes
+        items['durée'] = convertir_time(durée)
         items['desciption'] = desciption
         items['genre'] = genre
         items['acteurs'] = acteurs
@@ -60,23 +61,6 @@ class ImdbSpiderSpider(scrapy.Spider):
         yield items
 
 
-#_______________________________
-
-    # def parse(self, response):
-    #     items = ScrapImdbItem()
-    #     for movie in response.css('tr'):
-
-    #         title = movie.css('td.titleColumn a::text').get()
-    #         year = movie.css('span.secondaryInfo::text').get()  #response.xpath("//span[@class='text']/text()").extract()
-    #         url = movie.css('td.titleColumn a')
- 
-
-    #         items['title'] = title
-    #         items['year'] = year
-    #         items['url'] = url
-            
-           
-    #         yield items
         
 
     

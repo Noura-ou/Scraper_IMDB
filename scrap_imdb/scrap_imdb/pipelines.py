@@ -50,17 +50,23 @@ class ScrapImdbPipeline:
         for i, title in enumerate(movie_titles):
             result += "{} - {}\n".format(i+1, title)  
         return result
+    
+    def percentage_by_country(self, country: str, n: int) -> str:
+        top_rated = list(self.collection.find().sort([("score", pymongo.DESCENDING)]).limit(n))
+        total_count = len(top_rated)
+        count_by_country = self.collection.count_documents({"pays": {"$regex": country}, "_id": {"$in": [movie["_id"] for movie in top_rated]}})
+        percentage = count_by_country / total_count * 100
+        return f"Parmi les {n} films les mieux notés, {percentage:.2f}% sont de {country}."
 
-
-
-pipeline = ScrapImdbPipeline()  
-
-top_movies_by_genre = pipeline.top_movies_by_genre('Drama', 5)
-print(top_movies_by_genre)
-
-
-
-
+    def average_time_by_genre(self) -> str:
+        result = ""
+        genres = self.collection.distinct("genre")
+        for genre in genres:
+            time_list = [movie["durée"] for movie in self.collection.find({"genre": {"$regex": genre}})]
+            if time_list:
+                average_runtime = sum(time_list) / len(time_list)
+                result += f"La durée moyenne d'un film de genre {genre} est de {average_runtime:.2f} minutes.\n"
+        return result
 
 
 
