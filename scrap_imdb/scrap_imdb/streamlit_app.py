@@ -10,9 +10,7 @@ def main():
     longest = utils.longest_movie(collection)
     st.write(longest)
 
-
-        
-    genres = ['Action', 'Comedy', 'Drama', 'Horror', 'Thriller']
+    
     st.write("# Meilleurs films par genre")
     # récupération des genres disponibles dans la collection
     genres = collection.distinct("genre")
