@@ -1,11 +1,19 @@
 import scrapy
+import time
 from ..items import ScrapImdbItem
+
+def convert_duration_to_minutes(duration):
+    hours, minutes = duration.split('h ')
+    minutes_only = minutes[:-1]
+    total_minutes = int(hours) * 60 + int(minutes_only)
+    return total_minutes
+
 
 class ImdbSpiderSpider(scrapy.Spider):
     name = "imdb_spider"
     allowed_domains = ["imdb.com"]
     #start_urls = ['https://www.imdb.com/chart/top/?ref_=nv_mv_250']
-    user_agent = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/111.0'
+    user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.4.1 Safari/605.1.15'
 
     def start_requests(self):
         yield scrapy.Request(url='https://www.imdb.com/chart/top/?ref_=nv_mv_250', headers={
@@ -21,14 +29,23 @@ class ImdbSpiderSpider(scrapy.Spider):
         titre = response.css('td.titleColumn a::text').get()
         for link in links:
             yield response.follow(link, callback=self.parse_movie)
+            # time.sleep(2)
         
     
 
     def parse_movie(self, response):
 
         items = ScrapImdbItem()
-        titre_original = response.xpath("//h1//span[@class='sc-afe43def-1 fDTGTb']/text()").get().strip('()')
-        durée = response.xpath('(//ul[@class="ipc-inline-list ipc-inline-list--show-dividers sc-afe43def-4 kdXikI baseAlt"]/li)[3]//text()').get().strip('()')
+        titre_original_element = response.xpath("//h1//span[@class='sc-afe43def-1 fDTGTb']/text()")
+        if titre_original_element:
+            titre_original = titre_original_element.get().strip('()')
+        else:
+            titre_original = "Titre inconnu"
+        # durée = response.xpath('(//ul[@class="ipc-inline-list ipc-inline-list--show-dividers sc-afe43def-4 kdXikI baseAlt"]/li)[3]//text()').get().strip('()')
+
+        durée_raw = response.xpath('(//ul[@class="ipc-inline-list ipc-inline-list--show-dividers sc-afe43def-4 kdXikI baseAlt"]/li)[3]//text()').get().strip('()')
+        durée = convert_duration_to_minutes(durée_raw)
+
         date = response.xpath('(//ul[@class="ipc-inline-list ipc-inline-list--show-dividers sc-afe43def-4 kdXikI baseAlt"]/li)[1]//text()').get().strip('()')
         score = response.xpath('//a[@class="ipc-btn ipc-btn--single-padding ipc-btn--center-align-content ipc-btn--default-height ipc-btn--core-baseAlt ipc-btn--theme-baseAlt ipc-btn--on-textPrimary ipc-text-button sc-acdbf0f3-2 tBSnU"]//span[@class="ipc-btn__text"]//div[@class="sc-acdbf0f3-3 kpRihV"]//div[@class="sc-bde20123-2 gYgHoj"]//text()').get().strip('()')
         nbr_votants = response.xpath('(//a[@class="ipc-btn ipc-btn--single-padding ipc-btn--center-align-content ipc-btn--default-height ipc-btn--core-baseAlt ipc-btn--theme-baseAlt ipc-btn--on-textPrimary ipc-text-button sc-acdbf0f3-2 tBSnU"]//span[@class="ipc-btn__text"]//div[@class="sc-acdbf0f3-3 kpRihV"]//div[@class="sc-bde20123-3 bjjENQ"])//text()').get().strip('()')
