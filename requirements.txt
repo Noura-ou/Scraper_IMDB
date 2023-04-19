@@ -58,3 +58,4 @@ w3lib
 wcwidth 
 zipp 
 zope.interface 
+streamlit

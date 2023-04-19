@@ -13,16 +13,13 @@ class ImdbSpiderSpider(scrapy.Spider):
         })
 
 
-    def parse(self, response):
-        # extraire les liens vers les pages de chaque film
-        
+    def parse(self, response):        
         links = response.css('td.titleColumn a::attr(href)').getall()
         for link in links:
             yield response.follow(link, callback=self.parse_movie)
         
 
     def parse_movie(self, response):
-
         items = ScrapImdbItem()
         titre_original = response.xpath("//h1//span[@class='sc-afe43def-1 fDTGTb']/text()").get().strip('()')
         durée = response.xpath('(//ul[@class="ipc-inline-list ipc-inline-list--show-dividers sc-afe43def-4 kdXikI baseAlt"]/li)[3]//text()').get().strip('()')
@@ -35,6 +32,7 @@ class ImdbSpiderSpider(scrapy.Spider):
         pays = response.xpath('(//ul[@class="ipc-metadata-list ipc-metadata-list--dividers-all ipc-metadata-list--base"]//li[@class="ipc-metadata-list__item"]//div[@class="ipc-metadata-list-item__content-container"]//ul[@class="ipc-inline-list ipc-inline-list--show-dividers ipc-inline-list--inline ipc-metadata-list-item__list-content base"]//li[@class="ipc-inline-list__item"]//a[@class="ipc-metadata-list-item__list-content-item ipc-metadata-list-item__list-content-item--link"])[1]//text()').extract()
         langue_d_origine = response.xpath('(//ul[@class="ipc-metadata-list ipc-metadata-list--dividers-all ipc-metadata-list--base"]//li[@class="ipc-metadata-list__item"]//div[@class="ipc-metadata-list-item__content-container"]//ul[@class="ipc-inline-list ipc-inline-list--show-dividers ipc-inline-list--inline ipc-metadata-list-item__list-content base"]//li[@class="ipc-inline-list__item"]//a[@class="ipc-metadata-list-item__list-content-item ipc-metadata-list-item__list-content-item--link"])[4]//text()').extract()
         budget = response.xpath('(//li[@class="ipc-metadata-list__item sc-6d4f3f8c-2 byhjlB"]//div[@class="ipc-metadata-list-item__content-container"]//li[@class="ipc-inline-list__item"]//span[@class="ipc-metadata-list-item__list-content-item"])[1]//text()').get()
+        Sociétés_de_production = response.xpath('(//li[@class="ipc-metadata-list__item ipc-metadata-list-item--link"]//div[@class="ipc-metadata-list-item__content-container"]//ul[@class="ipc-inline-list ipc-inline-list--show-dividers ipc-inline-list--inline ipc-metadata-list-item__list-content base"]//li[@class="ipc-inline-list__item"]//a[@class="ipc-metadata-list-item__list-content-item ipc-metadata-list-item__list-content-item--link"])[3]//text()').extract()       
         
         def convertir_time(durée):
             # extraire les heures et les minutes de la durée
@@ -58,6 +56,7 @@ class ImdbSpiderSpider(scrapy.Spider):
         items['pays'] = pays
         items['langue_d_origine'] = langue_d_origine
         items['budget'] = budget
+        items['Sociétés_de_production'] = Sociétés_de_production
 
         yield items
 
