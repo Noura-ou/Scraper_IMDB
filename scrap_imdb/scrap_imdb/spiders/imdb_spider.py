@@ -6,7 +6,8 @@ from ..items import ScrapImdbItem
 class ImdbSpiderSpider(scrapy.Spider):
     name = "imdb_spider"
     allowed_domains = ["imdb.com"]
-    user_agent = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/111.0'
+    user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.4 Safari/605.1.15'
+    # user_agent = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/111.0'
 
     def start_requests(self):
         yield scrapy.Request(url='https://www.imdb.com/chart/top/?ref_=nv_mv_250', headers={
