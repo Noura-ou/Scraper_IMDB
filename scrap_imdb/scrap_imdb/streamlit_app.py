@@ -68,16 +68,40 @@ def main():
       )
     
 
-
     st.write("## FIltrer les films en utilisant pluieurs filtres ")
     # affichage des résultats en fonction du choix de recherche
     if search_option == "Par titre":
         titre_original = collection.distinct("titre_original")
-        # affichage des genres sous forme de liste déroulante dans Streamlit
         titre_original = st.selectbox("Choisissez le titre du film :", titre_original)
         result = utils.search_movie_by_title(titre_original)
-        for result in result:
-           st.write(result["titre_original"], " - ", result["date"])
+        for movie in result:
+            st.markdown(f"<h5 style='color: green;'>La date de sortie du film : </h5>", unsafe_allow_html=True)
+            st.write(movie["date"])
+            st.markdown(f"<h5 style='color: green;'>Acteurs : </h5>", unsafe_allow_html=True)
+            for actor in movie["acteurs"]:
+                st.write(actor)
+            st.markdown(f"<h5 style='color: green;'>Description : </h5>", unsafe_allow_html=True)
+            st.write(movie["desciption"])
+            st.markdown(f"<h5 style='color: green;'>La Durée du film :</h5>", unsafe_allow_html=True)
+            st.write(movie["durée"])
+            st.markdown(f"<h5 style='color: green;'>Le genre du film :</h5>", unsafe_allow_html=True)
+            for genre in movie["genre"]:
+                st.write(genre)
+            st.markdown(f"<h5 style='color: green;'>Le score du film :</h5>", unsafe_allow_html=True)
+            st.write(movie["score"])
+            st.markdown(f"<h5 style='color: green;'>Le nombre de personnes ayant voté pour le film:</h5>", unsafe_allow_html=True)
+            st.write(movie["nbr_votants"])
+            st.markdown(f"<h5 style='color: green;'>Le pays du film:</h5>", unsafe_allow_html=True)
+            for pays in movie["pays"]:
+              st.write(pays)
+            st.markdown(f"<h5 style='color: green;'>La langue d'origine du film:</h5>", unsafe_allow_html=True)
+            for lng in movie["langue_d_origine"]:
+               st.write(lng)
+            st.markdown(f"<h5 style='color: green;'>Le Budget du film:</h5>", unsafe_allow_html=True)
+            st.write(movie["budget"])
+
+
+
     elif search_option == "Par acteur(s)":
         selected_actors = collection.distinct("acteurs")
         # affichage des acteurs sous forme de liste déroulante multiselect dans Streamlit
@@ -85,16 +109,75 @@ def main():
         result = utils.search_movie_by_actor(selected_actors)
         for result in result:
            st.write(result["titre_original"])
+
     elif search_option == "Par genre":
         genre = collection.distinct("genre")
         # affichage des genres sous forme de liste déroulante dans Streamlit
-        genre = st.selectbox("Choisissez le genre du film :", genre)
-        utils.search_movie_by_genre(genre)
+        genre = st.selectbox("Choisissez un genre du film :", genre)
+        result = utils.search_movie_by_genre(genre)
+        compteur = 1
+        for movie in result:
+            st.markdown(f"<h3 style='color:blue;'> Film {compteur}: {movie['titre_original']} </h3>", unsafe_allow_html=True)
+            st.markdown(f"<h5 style='color: green;'>La date de sortie du film : </h5>", unsafe_allow_html=True)
+            st.write(movie["date"])
+            st.markdown(f"<h5 style='color: green;'>Acteurs : </h5>", unsafe_allow_html=True)
+            for actor in movie["acteurs"]:
+                st.write(actor)
+            st.markdown(f"<h5 style='color: green;'>Description : </h5>", unsafe_allow_html=True)
+            st.write(movie["desciption"])
+            st.markdown(f"<h5 style='color: green;'>La Durée du film :</h5>", unsafe_allow_html=True)
+            st.write(movie["durée"])
+            st.markdown(f"<h5 style='color: green;'>Le score du film :</h5>", unsafe_allow_html=True)
+            st.write(movie["score"])
+            st.markdown(f"<h5 style='color: green;'>Le nombre de personnes ayant voté pour le film:</h5>", unsafe_allow_html=True)
+            st.write(movie["nbr_votants"])
+            st.markdown(f"<h5 style='color: green;'>Le pays du film:</h5>", unsafe_allow_html=True)
+            for pays in movie["pays"]:
+              st.write(pays)
+            st.markdown(f"<h5 style='color: green;'>La langue d'origine du film:</h5>", unsafe_allow_html=True)
+            for lng in movie["langue_d_origine"]:
+               st.write(lng)
+            st.markdown(f"<h5 style='color: green;'>Le Budget du film:</h5>", unsafe_allow_html=True)
+            st.write(movie["budget"])
+            compteur += 1
+
+
     elif search_option == "Par durée":
         # affichage d'un slider pour sélectionner une plage de durée pour les films
-        min_duration, max_duration = st.slider("Sélectionnez une plage de durée (en minutes) :", 0, 300, (0, 300), 10)
+        min_duration, max_duration = st.slider("Sélectionnez une plage de durée (en minutes) :", 0, 400, (0, 400), 10)
+        result = utils.search_movie_by_duration(min_duration, max_duration)
+        compteur = 1
+        if not result:
+            st.write("Aucun film ne correspond à cette durée.")
+        else:
+            for movie in result:
+                st.markdown(f"<h3 style='color:blue;'> Film {compteur}: {movie['titre_original']} </h3>", unsafe_allow_html=True)
+                st.markdown(f"<h5 style='color: green;'>La date de sortie du film : </h5>", unsafe_allow_html=True)
+                st.write(movie["date"])
+                st.markdown(f"<h5 style='color: green;'>Acteurs : </h5>", unsafe_allow_html=True)
+                st.markdown(f"<h5 style='color: green;'>La Durée du film :</h5>", unsafe_allow_html=True)
+                st.write(movie["durée"])
+                for actor in movie["acteurs"]:
+                    st.write(actor)
+                st.markdown(f"<h5 style='color: green;'>Description : </h5>", unsafe_allow_html=True)
+                st.write(movie["desciption"])
+                st.markdown(f"<h5 style='color: green;'>Le score du film :</h5>", unsafe_allow_html=True)
+                st.write(movie["score"])
+                st.markdown(f"<h5 style='color: green;'>Le nombre de personnes ayant voté pour le film:</h5>", unsafe_allow_html=True)
+                st.write(movie["nbr_votants"])
+                st.markdown(f"<h5 style='color: green;'>Le pays du film:</h5>", unsafe_allow_html=True)
+                st.markdown(f"<h5 style='color: green;'>Le genre du film :</h5>", unsafe_allow_html=True)
+                for genre in movie["genre"]:
+                    st.write(genre)
+                for pays in movie["pays"]:
+                    st.write(pays)
+                st.markdown(f"<h5 style='color: green;'>La langue d'origine du film:</h5>", unsafe_allow_html=True)
+                for lng in movie["langue_d_origine"]:
+                    st.write(lng)
+                st.markdown(f"<h5 style='color: green;'>Le Budget du film:</h5>", unsafe_allow_html=True)
+                st.write(movie["budget"])
+                compteur += 1
 
-        utils.search_movie_by_duration(min_duration,max_duration)
     elif search_option == "Par note":
         min_rating = st.slider('Note minimale', 1, 10, 5, 1)
         utils.search_movie_by_rating(min_rating)

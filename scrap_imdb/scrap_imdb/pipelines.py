@@ -1,7 +1,6 @@
 from scrapy.exporters import CsvItemExporter
 from pymongo import MongoClient
 from dotenv import load_dotenv
-import pymongo
 import os
 
 

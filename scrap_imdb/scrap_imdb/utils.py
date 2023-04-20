@@ -93,7 +93,14 @@ def cost_per_minute_by_genre(genre):
 # Fonctins pour la fonction recommandation des films : 
 
 def search_movie_by_title(titre_original):
-    result = collection.find({"titre_original": {"$regex": titre_original, "$options": "i"}})
+    result = collection.find({
+        "$or": [
+            {"titre_original": {"$regex": titre_original, "$options": "i"}},
+            {"acteurs": {"$regex": titre_original, "$options": "i"}},
+            {"desciption": {"$regex": titre_original, "$options": "i"}},
+            {"durée": {"$regex": titre_original, "$options": "i"}}
+        ]
+    })
     return list(result)
 
 def search_movie_by_actor(acteurs):
@@ -105,9 +112,10 @@ def search_movie_by_genre(genre_query):
     result = collection.find({"genre": {"$regex": genre_query, "$options": "i"}})
     return result
 
-def search_movie_by_duration(max_duration,min_duration):
-    result = collection.find({"duree_min": {"$lte": max_duration}, "duree_max": {"$gte": min_duration}})
+def search_movie_by_duration(min_duration, max_duration):
+    result = collection.find({"durée": {"$gte": min_duration, "$lte": max_duration}})
     return list(result)
+
 
 def search_movie_by_rating(score):
     result = collection.find({"note": {"$gte": score}})
