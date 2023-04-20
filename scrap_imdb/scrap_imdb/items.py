@@ -20,3 +20,12 @@ class ScrapImdbItem(scrapy.Item):
 
 class ScrapImdbSeriesItem(scrapy.Item):
     titre_original = scrapy.Field()
+    durée = scrapy.Field()
+    date = scrapy.Field()
+    score = scrapy.Field()
+    nbr_votants = scrapy.Field()
+    desciption = scrapy.Field()
+    genre = scrapy.Field()
+    acteurs = scrapy.Field()
+    nbr_eposodes = scrapy.Field()
+    nbr_saison = scrapy.Field()

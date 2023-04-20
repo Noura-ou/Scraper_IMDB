@@ -61,8 +61,43 @@ def main():
     st.write(cout_tournage)
 
 
-
+    st.sidebar.title("Menu de recherche")
+    search_option = st.sidebar.radio(
+    "Choisissez le type de recherche :", 
+    ("Par titre", "Par acteur(s)", "Par genre", "Par durée", "Par note")
+      )
     
+
+
+    st.write("## FIltrer les films en utilisant pluieurs filtres ")
+    # affichage des résultats en fonction du choix de recherche
+    if search_option == "Par titre":
+        titre_original = collection.distinct("titre_original")
+        # affichage des genres sous forme de liste déroulante dans Streamlit
+        titre_original = st.selectbox("Choisissez le titre du film :", titre_original)
+        result = utils.search_movie_by_title(titre_original)
+        for result in result:
+           st.write(result["titre_original"], " - ", result["date"])
+    elif search_option == "Par acteur(s)":
+        selected_actors = collection.distinct("acteurs")
+        # affichage des acteurs sous forme de liste déroulante multiselect dans Streamlit
+        selected_actors = st.multiselect("Choisissez un ou plusieurs acteurs :", selected_actors)
+        result = utils.search_movie_by_actor(selected_actors)
+        for result in result:
+           st.write(result["titre_original"])
+    elif search_option == "Par genre":
+        genre = collection.distinct("genre")
+        # affichage des genres sous forme de liste déroulante dans Streamlit
+        genre = st.selectbox("Choisissez le genre du film :", genre)
+        utils.search_movie_by_genre(genre)
+    elif search_option == "Par durée":
+        # affichage d'un slider pour sélectionner une plage de durée pour les films
+        min_duration, max_duration = st.slider("Sélectionnez une plage de durée (en minutes) :", 0, 300, (0, 300), 10)
+
+        utils.search_movie_by_duration(min_duration,max_duration)
+    elif search_option == "Par note":
+        min_rating = st.slider('Note minimale', 1, 10, 5, 1)
+        utils.search_movie_by_rating(min_rating)
 
 
 

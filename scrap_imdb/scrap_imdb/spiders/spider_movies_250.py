@@ -3,6 +3,14 @@ from ..items import ScrapImdbItem
 
 
 class ImdbSpiderSpider(scrapy.Spider):
+
+    custom_settings = {
+        'ITEM_PIPELINES': {
+            'scrap_imdb.pipelines.ScrapImdbPipeline': 400,
+            'scrap_imdb.pipelines.CsvPipeline': 301,
+        }
+    }
+
     name = "spider_movies_250"
     allowed_domains = ["imdb.com"]
     user_agent = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/111.0'

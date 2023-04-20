@@ -31,7 +31,10 @@ FEED_EXPORT_FIELDS = ['titre_original', 'durée', 'date','score','nbr_votants', 
 
 #CSV for series spider
 FEED_URI = 'series.csv'
-FEED_EXPORT_FIELDS = ['titre_original']
+FEED_EXPORTERS = {
+    'csv': 'scrapy.exporters.CsvItemExporter',
+}
+FEED_EXPORT_FIELDS = ['titre_original' , 'durée', 'date','score','nbr_votants', 'desciption', 'genre','acteurs' , 'nbr_eposodes' , 'nbr_saison']
 
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
@@ -77,10 +80,14 @@ FEED_EXPORT_FIELDS = ['titre_original']
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-ITEM_PIPELINES = {
-   "scrap_imdb.pipelines.ScrapImdbPipeline": 300,
-   "scrap_imdb.pipelines.ScrapSeriesPipeline": 300,
-}
+
+
+
+# ITEM_PIPELINES = {
+#     "scrap_imdb.pipelines_series.ScrapSeriesPipeline": 400,
+# }
+
+ 
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html

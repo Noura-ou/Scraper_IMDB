@@ -89,3 +89,26 @@ def cost_per_minute_by_genre(genre):
         cost_per_minute = total_budget / (total_runtime // 60)
         return "le coût de tournage d’une minute des films de genre ' {} ' est ' {} '".format(genre,cost_per_minute)
 
+
+# Fonctins pour la fonction recommandation des films : 
+
+def search_movie_by_title(titre_original):
+    result = collection.find({"titre_original": {"$regex": titre_original, "$options": "i"}})
+    return list(result)
+
+def search_movie_by_actor(acteurs):
+    result = collection.find({"acteurs": {"$regex": acteurs, "$options": "i"}})
+    return result
+
+def search_movie_by_genre(genre_query):
+   # genres = collection.distinct("genre")
+    result = collection.find({"genre": {"$regex": genre_query, "$options": "i"}})
+    return result
+
+def search_movie_by_duration(max_duration,min_duration):
+    result = collection.find({"duree_min": {"$lte": max_duration}, "duree_max": {"$gte": min_duration}})
+    return list(result)
+
+def search_movie_by_rating(score):
+    result = collection.find({"note": {"$gte": score}})
+    return list(result)
